@@ -1,0 +1,10 @@
+import {useState,useEffect} from 'react';
+export const API=import.meta.env.VITE_API_BASE_URL||'';
+export const DEMO='http://127.0.0.1:8000/demo/assessment.html?mode=defective';
+export const asset=p=>API+(p||'');
+export async function api(path,options){let res;try{res=await fetch(API+path,{...options,headers:{'Content-Type':'application/json',...options?.headers}})}catch{throw Error('Cannot reach WebTrace. Check that the backend is running.')}const data=await res.json();if(!res.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||'Request failed'));return data}
+export const post=(path,data)=>api(path,{method:'POST',body:JSON.stringify(data)});
+export const date=s=>new Date(s).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+export const human=s=>(s||'pending').replaceAll('_',' ');
+export const prompts={ui:['UI & accessibility audit','Inspect the page for broken images, inaccessible controls, overflow and runtime errors.'],login:['Login flow','Verify synthetic candidate login on the assessment sandbox.'],navigation:['Navigation checks','Inspect navigation destinations and verify the sandbox help link.'],forms:['Form validation','Verify empty required fields cannot be submitted.'],assessment:['Complete assessment flow','Sign in with synthetic credentials, start an assessment, select an answer and verify submission.'],submission:['Assessment submission','Complete the synthetic assessment and verify its success confirmation.'],responsive:['Responsive layout','Inspect horizontal overflow at desktop (1280px), tablet (768px) and mobile (390px).'],custom:['Custom UI checks','Inspect the page and verify the supplied expected CSS selectors.']};
+export function useRuns(){const[runs,setRuns]=useState(null);const[error,setError]=useState('');useEffect(()=>{let stopped=false;const load=()=>api('/api/tests?limit=500').then(d=>{if(!stopped){setRuns(d);setError('')}}).catch(e=>{if(!stopped)setError(e.message)});load();const t=setInterval(load,4000);return()=>{stopped=true;clearInterval(t)}},[]);return{runs,error}}

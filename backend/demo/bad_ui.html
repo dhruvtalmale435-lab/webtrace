@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Shop - page with known UI bugs</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7f9; color: #1f2937; }
+    header { background: #1f2937; color: #fff; padding: 14px 24px; display: flex; gap: 24px; align-items: center; }
+    header a { color: #fff; text-decoration: none; }
+    main { max-width: 1000px; margin: 24px auto; padding: 0 24px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+    .row { display: flex; gap: 16px; align-items: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Demo Shop</strong>
+    <a href="#home">Home</a>
+    <a href="#products">Products</a>
+    <!-- Empty link: no text and no accessible name (warning) -->
+    <a href="#cart" style="display:inline-block;width:28px;height:28px;background:#9ca3af;border-radius:4px"></a>
+  </header>
+
+  <main>
+    <h1>Welcome to Demo Shop</h1>
+
+    <!-- BUG 1: broken image -->
+    <div class="card row">
+      <img src="missing-image.png" width="120" height="80" alt="Broken product image">
+      <p>This image failed to load (file does not exist).</p>
+    </div>
+
+    <!-- BUG 2: expected element exists but is not visible (use .hidden-message) -->
+    <div class="card">
+      <div class="hidden-message"
+           style="visibility:hidden;width:280px;height:40px;background:#e0e7ff">
+        This message should be visible
+      </div>
+    </div>
+
+    <!-- BUG 3: button with no text and no accessible name -->
+    <div class="card row">
+      <button id="empty-button" style="width:150px;height:38px;border:2px solid #7c3aed;background:#fff"></button>
+      <span>Button without a name</span>
+    </div>
+
+    <!-- Warnings: input without label, checkbox without label, image without alt -->
+    <div class="card row">
+      <input type="text" placeholder="Search products">
+      <input type="checkbox">
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" width="60" height="40">
+    </div>
+
+    <!-- Warning: text boxes overlapping each other -->
+    <div class="card" style="position:relative;height:70px">
+      <h2 style="position:absolute;top:14px;left:16px;margin:0">Big sale today</h2>
+      <p style="position:absolute;top:16px;left:20px;margin:0">Overlapping text</p>
+    </div>
+
+    <!-- BUG 4: content wider than the screen (horizontal overflow) -->
+    <div style="width:1500px;height:10px;background:#f9a8d4;margin-top:10px"></div>
+  </main>
+</body>
+</html>

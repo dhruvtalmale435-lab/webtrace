@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+playwright
+Pillow
+python-dotenv
+pydantic
+sqlalchemy

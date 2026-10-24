@@ -1,0 +1,12 @@
+.git
+**/node_modules
+**/__pycache__
+**/.env
+**/*.db*
+backend/screenshots
+backend/baselines
+backend/reports
+frontend/dist
+.venv
+verification
+backend/artifacts
