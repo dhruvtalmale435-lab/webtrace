@@ -1,5 +1,13 @@
 # WebTrace
 
+## GitHub Pages frontend
+
+The workflow at `.github/workflows/pages.yml` builds the React frontend and deploys `frontend/dist` with `/webtrace/` asset paths and hash routing. GitHub Pages must use **GitHub Actions** as its publishing source, rather than publishing this repository's raw root `index.html`.
+
+GitHub Pages hosts the interface only. FastAPI, SQLite and Playwright require a separate running backend. Until one is connected, the hosted interface shows an explicit connection notice and disables test execution. No demonstration results are invented.
+
+To connect a deployed HTTPS backend, open Settings and enter its base URL. The website verifies `/health` before saving that URL in the browser. Set the backend's `CORS_ORIGINS` to `https://dhruvtalmale435-lab.github.io`. Alternatively, set the repository Actions variable `VITE_API_BASE_URL` before the next deployment. The local single-origin application continues to use port 8000 as before.
+
 A working single-workspace QA dashboard built on the existing React/Vite frontend and FastAPI/Playwright backend. Core testing needs no AI API key.
 
 ## Start on Windows

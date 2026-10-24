@@ -19,6 +19,7 @@ venv/
 # Node / frontend
 node_modules/
 frontend/dist/
+frontend/dist-pages/
 dist/
 
 # Generated WebTrace artifacts
