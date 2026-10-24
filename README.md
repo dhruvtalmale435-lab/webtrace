@@ -120,3 +120,7 @@ python scripts/verify_evidence.py
 ```
 
 Results are recorded in `verification/evidence-results.json`. Open a downloaded trace with `python -m playwright show-trace <downloaded-zip-path>`. The diagnostic list omits request bodies/headers and redacts sensitive query parameter names; the native trace itself can include page and network data. Use synthetic data.
+
+## Hosted testing backend
+
+The public Pages frontend is configured to use `https://webtrace-qa-engine.onrender.com`. The backend is deployed as a Docker web service in Render. Its free compute plan runs one browser test at a time and uses session-local SQLite/evidence storage: service restarts or redeploys can remove runs, screenshots and traces. Idle free services can take time to wake up. Local installations still use their on-disk SQLite database. Permanent hosted retention requires a persistent storage configuration and is not provided by this free deployment.

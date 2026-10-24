@@ -10,7 +10,7 @@ export default function BackendConnection(){
    if(!['http:','https:'].includes(parsed.protocol)||parsed.username||parsed.password||parsed.search||parsed.hash)throw Error('Enter an HTTP(S) backend URL without credentials, query parameters or fragments.');
    if(location.protocol==='https:'&&parsed.protocol!=='https:')throw Error('This HTTPS website requires an HTTPS backend URL.');
    const base=parsed.href.replace(/\/$/,'');
-   const response=await fetch(base+'/health',{signal:AbortSignal.timeout(12000)});
+   const response=await fetch(base+'/health',{signal:AbortSignal.timeout(65000)});
    if(!response.ok||!response.headers.get('content-type')?.includes('application/json'))throw Error('That URL did not return a valid backend health response.');
    const data=await response.json();
    if(data.status!=='healthy'||data.service!=='WebTrace backend')throw Error('That endpoint is not a healthy WebTrace backend.');
