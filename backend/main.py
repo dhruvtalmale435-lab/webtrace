@@ -55,6 +55,7 @@ PORT = int(os.getenv("WEBTRACE_PORT", "8000"))
 HEADLESS = os.getenv("WEBTRACE_HEADED", "0").lower() not in {"1", "true", "yes"}
 SLOW_MO = int(os.getenv("WEBTRACE_SLOW_MO", "0") or 0)
 VIEWPORT = {"width": 1280, "height": 800}
+MAX_WORKERS = max(1, min(2, int(os.getenv('WEBTRACE_MAX_WORKERS', '2'))))
 SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2, "info": 3}
 
 app = FastAPI(title="WebTrace - AI QA Agent", version="2.0")
@@ -98,7 +99,7 @@ for _state in RUNS.values():
         _state.update(status="error", stage="done", error="Execution interrupted by server restart; rerun this test.")
         storage.save_run(_state)
 LOCK = threading.RLock()
-EXECUTOR = ThreadPoolExecutor(max_workers=2, thread_name_prefix="webtrace")
+EXECUTOR = ThreadPoolExecutor(max_workers=MAX_WORKERS, thread_name_prefix="webtrace")
 
 
 def now_iso() -> str:
@@ -564,7 +565,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return {"status": "healthy", "service": "WebTrace backend"}
+    return {"status": "healthy", "service": "WebTrace backend", "max_concurrent_runs": MAX_WORKERS, "storage_persistence": "session" if os.getenv('WEBTRACE_EPHEMERAL_STORAGE') == '1' else "persistent"}
 
 
 def _create(req: RunRequest):
@@ -575,8 +576,8 @@ def _create(req: RunRequest):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     with LOCK:
-        if sum(r['status'] in {'queued', 'running'} for r in RUNS.values()) >= 2:
-            raise HTTPException(status_code=429, detail="Two tests are already active. Wait for a run to finish.")
+        if sum(r['status'] in {'queued', 'running'} for r in RUNS.values()) >= MAX_WORKERS:
+            raise HTTPException(status_code=429, detail="The browser testing engine is busy. Wait for the active run to finish.")
         state = start_run(req)
     return {"run_id": state["run_id"], "status": "queued",
             "message": "Test started. Poll GET /api/tests/{run_id} for live results."}
